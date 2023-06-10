@@ -10,5 +10,5 @@ class Article(models.Model):
     content = models.TextField()
 
 
-class Example:
+class ExampleNEWW:
     pass
