@@ -9,5 +9,3 @@ class Article(models.Model):
     video_url = models.CharField(max_length=255)
     content = models.TextField()
 
-class Viktor4:
-    pass
