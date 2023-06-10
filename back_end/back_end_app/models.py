@@ -12,6 +12,6 @@ class Article(models.Model):
     content = models.TextField()
 
 
-class Article_new11(models.Model):
+class Article_new___(models.Model):
     video_url = models.CharField(max_length=255)
     content = models.TextField()
