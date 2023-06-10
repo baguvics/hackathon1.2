@@ -11,3 +11,8 @@ class Article(models.Model):
     video_url = models.CharField(max_length=255)
     content = models.TextField()
 
+
+class Article_new(models.Model):
+    # user = models.ForeignKey(User, on_delete=models.CASCADE) Потом добавим, когда глянем, весь ли функционал в дефолтном User подойдет
+    video_url = models.CharField(max_length=255)
+    content = models.TextField()
