@@ -1,0 +1,5 @@
+*.pyc
+pycache/
+venv/
+node_modules/
+build/
