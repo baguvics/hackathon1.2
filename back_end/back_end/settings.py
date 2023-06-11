@@ -37,7 +37,19 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "back_end_app.apps.BackEndAppConfig",
+    'rest_framework',
+    'drf_yasg',
+    'corsheaders',
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -47,6 +59,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = "back_end.urls"
@@ -79,6 +93,7 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
 
 
 # Password validation
@@ -115,3 +130,16 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Используется SMTP-сервер для отправки электронной почты
+EMAIL_HOST = 'smtp.gmail.com'  # Адрес SMTP-сервера
+EMAIL_PORT = 587  # Порт SMTP-сервера (обычно 587 для TLS)
+EMAIL_HOST_USER = 'vparipko007@gmail.com'  # Адрес электронной почты, используемый для аутентификации на SMTP-сервере
+EMAIL_HOST_PASSWORD = 'dj7GhuY3'  # Пароль от электронной почты для аутентификации на SMTP-сервере
+EMAIL_USE_TLS = True  # Использование TLS для защищенного соединения с SMTP-сервером
+DEFAULT_FROM_EMAIL = 'vparipko007@gmail.com'  # Адрес электронной почты отправителя по умолчанию
