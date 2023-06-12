@@ -2,11 +2,13 @@ import whisper
 import ssl
 from pytube import YouTube
 from time import gmtime, strftime
+import os
+import openai
 
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-youtube_video_url = "https://www.youtube.com/watch?v=adhpYFKh5Io"
+youtube_video_url = "https://www.youtube.com/watch?v=FX0s2tK-KU8"
 youtube_video_content = YouTube(youtube_video_url)
 youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
 title = youtube_video_content.title
@@ -21,6 +23,20 @@ model = whisper.load_model("small")
 
 result = model.transcribe("youtube/{}.mp4".format(title), verbose=True)
 print(result["text"])
+
+api_key = "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"
+openai.api_key = api_key
+
+text = "summarize next text." + result['text']
+
+summary = openai.Completion.create(
+  model="text-davinci-003",
+  prompt= text + "nnTl;dr",
+  max_tokens=2000,
+  temperature=0
+)
+
+print(summary['choices'][0]['text'])
 
 
 
