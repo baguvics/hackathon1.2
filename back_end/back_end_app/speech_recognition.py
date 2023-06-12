@@ -24,16 +24,16 @@ model = whisper.load_model("small")
 result = model.transcribe("youtube/{}.mp4".format(title), verbose=True)
 print(result["text"])
 
-api_key = "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"
+api_key = "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"
 openai.api_key = api_key
 
-text = "summarize next text." + result['text']
+text = "summarize next text from video." + result['text']
 
 summary = openai.Completion.create(
   model="text-davinci-003",
-  prompt= text + "nnTl;dr",
+  prompt=text,
   max_tokens=2000,
-  temperature=0
+  temperature=0.3
 )
 
 print(summary['choices'][0]['text'])
