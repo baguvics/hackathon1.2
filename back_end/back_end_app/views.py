@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from . import models, serializers
@@ -13,6 +15,9 @@ import openai
 import ffmpeg
 from time import gmtime, strftime
 import json
+
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # Регистрация пользователя
 User = get_user_model()
@@ -79,6 +84,7 @@ class ArticleView(APIView):
         start_time = int(data.get('startTime'))
         end_time = int(data.get('endTime'))
 
+<<<<<<< HEAD
 
         # ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -115,13 +121,84 @@ class ArticleView(APIView):
         #     # Другие данные статьи
         # }
         return Response(str(data))
-    
+=======
+        ssl._create_default_https_context = ssl._create_unverified_context
 
-class Musor(APIView):
-    def post(self, request):
-        data = json.loads(request.body)
-        value1 = int(data.get('value1'))
-        value2 = int(data.get('value2'))
-        return Response(str(value1 + value2))
+        youtube_video_content = YouTube("https://www.youtube.com/watch?v=gfUlCnMrZbw")
+        youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
+        title = youtube_video_content.title
+
+        high_res_streams = youtube_video_content.streams
+        print(high_res_streams)
+        high_res_stream = high_res_streams[1]
+        high_res_stream.download("youtube")
+        YOUR_FILE = "youtube/{}.mp4".format(title)
+
+        # probe = ffmpeg.probe(YOUR_FILE)
+        # time = float(probe['streams'][0]['duration']) // 2
+        # width = probe['streams'][0]['width']
+
+        model = whisper.load_model("small")
+
+        result = model.transcribe("youtube/{}.mp4".format(title), verbose=True, fp16=False, language="russian")
+        print(result["text"])
+
+        for segment in result["segments"]:
+            print("{}:{}".format(segment["start"] // 60, int(segment["start"]) & 60) + "  " + segment["text"])
+
+        text_from_video = result["text"]
+        chunk_size = 1500
+
+        sentences = re.findall(r'[^.!?]+[.!?]', text_from_video)
+        chunks = []
+
+        current_chunk = ''
+        for sentence in sentences:
+            if len(current_chunk) + len(sentence) <= chunk_size:
+                current_chunk += sentence
+            else:
+                chunks.append(current_chunk)
+                current_chunk = sentence
+
+        # Добавляем последний кусок текста
+        if current_chunk:
+            chunks.append(current_chunk)
+
+        chunks_timings = []
+        # Находим тайминги для каждого чанка
+
+        i = 0
+        for chunk in chunks:
+            i += 1
+            for segment in result["segments"]:
+                if segment["text"][:7] == chunk[:7]:
+                    chunks_timings.append(segment["start"])
+                    print("chunk number ", i, " timing: ", segment["start"])
+
+        summary_text = []
+        openai.api_key = "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"
+        prompt = "напиши абзац {} по следующему тексту из видео."
+        chunk_id = 0
+        for paragraph in chunks:
+            chunk_id += 1
+            text = prompt.format(chunk_id) + paragraph
+            summary = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=text,
+                max_tokens=2000,
+                temperature=0.3
+            )
+            summary_text.append({"paragraph {}".format(chunk_id): summary['choices'][0]['text']})
+            print(summary['choices'][0]['text'])
+        print(summary_text)
+
+        response_data = {
+            'summary': summary_text,
+            'timings': chunks_timings,
+            # Другие данные статьи
+        }
+        return Response(str(response_data))
+>>>>>>> origin
+    
 
     
