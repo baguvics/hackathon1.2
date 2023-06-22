@@ -20,5 +20,5 @@ urlpatterns = [
     path('api/v1/get_video_duration/<path:video_url>/', views.VideoView.as_view(), 
         name='get_video_duration'),                                                            # Получение видео
     path('api/v1/article/', views.ArticleView.as_view(), name='article'),                      # Генерация статьи
-    path('api/v1/musor', views.Musor.as_view())
+
 ]

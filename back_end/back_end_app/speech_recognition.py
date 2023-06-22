@@ -6,12 +6,6 @@ import os
 import openai
 
 
-
-
-
-
-
-
 def create_article(url, timing):
     ssl._create_default_https_context = ssl._create_unverified_context
 
