@@ -3,6 +3,9 @@ import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login';
 import Home from './components/Home';
+import ArticleForm from './components/ArticlForm';
+import './css/App.css'
+import logo from './img/logo.svg';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,32 +32,53 @@ function App() {
 
   return (
     <>
-    <div className='container'>
-      <header className='header'>
-        <Link to="/register" className='register'>Register</Link>
-          <br />
-        <Link to="/login" className='login'>Login</Link>
-      </header>
+      <div className='app'>
+        <header className='header'>
+          <div className='header-left'>
+            <div className='logo'>
+              <svg width="100px" height="100px" viewBox="0 0 100 100">
+                <image xlinkHref={logo} width="100" height="100" />
+              </svg>
+            </div>
+          </div>
+          <div className='header-right'>
+            <div className='register-container'>
+              <Link to="/register" className='register-link'>Регистрация</Link>
+            </div>
+            <div className='login-container'>
+              <Link to="/login" className='register-link'>Авторизация</Link>
+            </div>
+          </div>
+        </header>
 
-
-      <Routes>
-        <Route
-          path="/register"
-          element={<Register onRegister={handleRegister} />}
-        />
-        <Route
-          path="/login"
-          element={<Login onLogin={handleLogin} setError={setLoginError} />}
-        />
-        <Route path="" element={<Home />} />
-      </Routes>
-      {isLoggedIn && (
-        <div>
-          <h2>Добро пожаловать! Вы успешно авторизованы.</h2>
-          <button onClick={handleLogout}>Logout</button>
+        <div className='content'>
+          <div className='welcome'>
+            <h2>КОНВЕРТЕР ВИДЕО</h2>
+            <h3>создает статью из видео</h3>
+            <button class='glowing-btn'><span class='glowing-txt'>C<span class='faulty-letter'>L</span>ICK</span></button>
+          </div>
+          <Routes>
+            <Route
+              path="/register"
+              element={<Register onRegister={handleRegister} />}
+            />
+            <Route
+              path="/login"
+              element={<Login onLogin={handleLogin} setError={setLoginError} />}
+            />
+            <Route 
+            path=''
+            element ={<ArticleForm/>}
+            />
+            <Route 
+            path='/ss'
+            element ={<Home/>}
+            />
+          </Routes>
         </div>
-      )}
-    </div>
+      </div>
+
+
     </>
   );
 }
