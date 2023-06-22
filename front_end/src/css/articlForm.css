@@ -1,0 +1,7 @@
+.content_articlForm{
+    padding: 100px 0 0 60px
+}
+
+.power, .videoUrl, .addTime, .startTime, .endTime {
+    color: white;
+}

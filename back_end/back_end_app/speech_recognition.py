@@ -6,6 +6,12 @@ import os
 import openai
 
 
+
+
+
+
+
+
 def create_article(url, timing):
     ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -22,7 +28,7 @@ def create_article(url, timing):
 
     model = whisper.load_model("small")
 
-    result = model.transcribe("youtube/{}.mp4".format(title), verbose=True)
+    result = model.transcribe("youtube/{}.mp4".format(title), verbose=True, fp16=True)
     print(result["text"])
 
     api_key = "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"
@@ -39,20 +45,20 @@ def create_article(url, timing):
 
     print(summary['choices'][0]['text'])
 
-# load audio and pad/trim it to fit 30 seconds
+# # load audio and pad/trim it to fit 30 seconds
 # audio = whisper.load_audio("ya-pomnyu-chudnoe-mgnovenie.mp3")
 # audio = whisper.pad_or_trim(audio)
-#
+
 # # make log-Mel spectrogram and move to the same device as the model
 # mel = whisper.log_mel_spectrogram(audio).to(model.device)
-#
+
 # # detect the spoken language
 # _, probs = model.detect_language(mel)
 # print(f"Detected language: {max(probs, key=probs.get)}")
-#
+
 # # decode the audio
 # options = whisper.DecodingOptions(fp16 = False)
 # result = whisper.decode(model, mel, options)
-#
+
 # # print the recognized text
 # print(result.text)
