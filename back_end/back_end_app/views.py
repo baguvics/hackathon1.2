@@ -84,44 +84,6 @@ class ArticleView(APIView):
         start_time = int(data.get('startTime'))
         end_time = int(data.get('endTime'))
 
-<<<<<<< HEAD
-
-        # ssl._create_default_https_context = ssl._create_unverified_context
-
-        # youtube_video_content = YouTube(video_url)
-        # youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
-        # title = youtube_video_content.title
-
-        # audio_streams = youtube_video_content.streams.filter(only_audio=True)
-        # audio_stream = audio_streams[0]
-        # audio_stream.download("youtube")
-        # YOUR_FILE = "youtube/{}.mp4".format(title)
-
-        # probe = ffmpeg.probe(YOUR_FILE)
-        # time = float(probe['streams'][0]['duration']) // 2
-
-        # model = whisper.load_model("tiny")
-
-        # result = model.transcribe("youtube/{}.mp4".format(title), verbose=True, fp16=False)
-
-
-        # text = "summarize into 1500 words next text from video." + result['text'][:500]
-
-        # summary = openai.Completion.create(
-        #     model="text-davinci-003",
-        #     prompt=text,
-        #     max_tokens=2000,
-        #     temperature=0.3
-        # )
-
-        # summary_text = summary['choices'][0]['text']
-
-        # response_data = {
-        #     'summary': summary_text,
-        #     # Другие данные статьи
-        # }
-        return Response(str(data))
-=======
         ssl._create_default_https_context = ssl._create_unverified_context
 
         youtube_video_content = YouTube("https://www.youtube.com/watch?v=gfUlCnMrZbw")
@@ -198,7 +160,6 @@ class ArticleView(APIView):
             # Другие данные статьи
         }
         return Response(str(response_data))
->>>>>>> origin
     
 
     
