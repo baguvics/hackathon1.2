@@ -28,7 +28,7 @@ YOUR_FILE = "youtube/{}.mp4".format(title)
 
 model = whisper.load_model("small")
 
-result = model.transcribe("youtube/{}.mp4".format(title), verbose=True, fp16=False, language="russian")
+result = model.transcribe("youtube/{}.mp4", verbose=True, fp16=False, language="russian")
 print(result["text"])
 
 for segment in result["segments"]:
