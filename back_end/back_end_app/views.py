@@ -78,31 +78,37 @@ class VideoView(APIView):
 class ArticleView(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        video_url = data.get('video_url')
+        video_url = data.get('videoUrl')
         power = int(data.get('power'))
         add_time = bool(data.get('addTime', False))
         start_time = int(data.get('startTime'))
         end_time = int(data.get('endTime'))
+        video_file = data.get('videoFile')
+
+
 
         ssl._create_default_https_context = ssl._create_unverified_context
 
-        youtube_video_content = YouTube("https://www.youtube.com/watch?v=gfUlCnMrZbw")
-        youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
-        title = youtube_video_content.title
+        if video_file is None:
+            youtube_video_content = YouTube(video_url)
+            youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
+            title = youtube_video_content.title
 
-        high_res_streams = youtube_video_content.streams
-        print(high_res_streams)
-        high_res_stream = high_res_streams[1]
-        high_res_stream.download("youtube")
-        YOUR_FILE = "youtube/{}.mp4".format(title)
+            high_res_streams = youtube_video_content.streams
+            print(high_res_streams)
+            high_res_stream = high_res_streams[1]
+            high_res_stream.download("youtube")
+            YOUR_FILE = "youtube/{}.mp4".format(title)
 
-        # probe = ffmpeg.probe(YOUR_FILE)
-        # time = float(probe['streams'][0]['duration']) // 2
-        # width = probe['streams'][0]['width']
+            probe = ffmpeg.probe(YOUR_FILE)
+            time = float(probe['streams'][0]['duration']) // 2
+            width = probe['streams'][0]['width']
+        else:
+            return Response('файл пришел')
 
-        model = whisper.load_model("small")
+        model = whisper.load_model("tiny")
 
-        result = model.transcribe("youtube/{}.mp4".format(title), verbose=True, fp16=False, language="russian")
+        result = model.transcribe("../youtube/Me.mp4", verbose=True, fp16=False)
         print(result["text"])
 
         for segment in result["segments"]:
@@ -138,7 +144,7 @@ class ArticleView(APIView):
                     print("chunk number ", i, " timing: ", segment["start"])
 
         summary_text = []
-        openai.api_key = "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"
+        openai.api_key = "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"
         prompt = "напиши абзац {} по следующему тексту из видео."
         chunk_id = 0
         for paragraph in chunks:
@@ -150,7 +156,7 @@ class ArticleView(APIView):
                 max_tokens=2000,
                 temperature=0.3
             )
-            summary_text.append({"paragraph {}".format(chunk_id): summary['choices'][0]['text']})
+            summary_text.append(summary['choices'][0]['text'])
             print(summary['choices'][0]['text'])
         print(summary_text)
 
@@ -159,7 +165,12 @@ class ArticleView(APIView):
             'timings': chunks_timings,
             # Другие данные статьи
         }
-        return Response(str(response_data))
+        # temp_data = {
+        #     'summary': [' Макаров\n\n В томлениих грустей без надежной, тревогих шумной с уйты, вдруг пришло мгновение передомное – ты появилась на сцене, как мимолетное введение, как гений чистой красоты. Твои милые черты, шлигоды, бутбарыф мятежной России в прежние мечты вновь проникли в мое сердце. Твой голоснежный, твои небесные черты пробудили во мне божество и вдохновение, жизнь и слёзы, любовь. И я вновь почувствовал вдохновение и жизнь.'}], 
+        #     'timings': [0.0]
+        # }
+        # return Response(temp_data)
+        return Response(response_data)
     
 
     

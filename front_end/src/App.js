@@ -51,30 +51,21 @@ function App() {
           </div>
         </header>
 
-        <div className='content'>
-          <div className='welcome'>
-            <h2>КОНВЕРТЕР ВИДЕО</h2>
-            <h3>создает статью из видео</h3>
-            <button class='glowing-btn'><span class='glowing-txt'>C<span class='faulty-letter'>L</span>ICK</span></button>
-          </div>
-          <Routes>
-            <Route
-              path="/register"
-              element={<Register onRegister={handleRegister} />}
-            />
-            <Route
-              path="/login"
-              element={<Login onLogin={handleLogin} setError={setLoginError} />}
-            />
-            <Route 
-            path=''
-            element ={<ArticleForm/>}
-            />
-            <Route 
-            path='/ss'
-            element ={<Home/>}
-            />
-          </Routes>
+        <div className='container'>
+            <Routes>
+              <Route
+                path="/register"
+                element={<Register onRegister={handleRegister} />}
+              />
+              <Route
+                path="/login"
+                element={<Login onLogin={handleLogin} setError={setLoginError} />}
+              />
+              <Route 
+              path=''
+              element ={<ArticleForm/>}
+              />
+            </Routes>
         </div>
       </div>
 
