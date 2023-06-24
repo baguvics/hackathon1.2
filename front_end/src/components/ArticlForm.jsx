@@ -8,33 +8,59 @@ const ArticleForm = () => {
 
     const [videoUrl, setVideoUrl] = useState('');               // URL видоса
     const [videoDuration, setVideoDuration] = useState('s');    // Полученная длительнотсь видео
-    const [power, setPower] = useState(0);                      // Выбор мощности
+    const [power, setPower] = useState(2);                      // Выбор мощности
     const [addTime, setAddTime] = useState(false);              // Выбор времени если нужно
     const [startTime, setStartTime] = useState(0);              // Начало видео
     const [endTime, setEndTime] = useState(0);                  // Конец видео
+    const [settings, setSettings] = useState(false);            // Дополнительные настройки
+    const [article, setArticle] = useState(null);               // Статья
+    const [timings, setTimings] = useState('');                 // Тайминги
+    const [isLoading, setIsLoading] = useState(false);          // Состояние загрузки статьи
+    const [imageArticle, setImageArticle] =useState(null)       // Картинки статьи
+    const [videoFile, setVideoFile] = useState(null);           // Видео файл
+    const [timings1, setTimings1] = useState('');                 // Тайминги
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, videoFile) => {
         if (endTime == 0){
             setEndTime(videoDuration);
         }
         e.preventDefault();
+        setIsLoading(true);
         // POST-запрос для получения статьи
-        const response = await axios.post(APIGetArticle, {
-        videoUrl,
-        videoDuration,
-        power,
-        addTime,
-        startTime,
-        endTime,
-        });
-        console.log(response.data)
+        try {
+            const response = await axios.post(APIGetArticle, {
+              videoUrl,
+              videoFile,
+              videoDuration,
+              power,
+              addTime,
+              startTime,
+              endTime,
+            });
+            
+            setArticle(response.data.summary);
+            setTimings(response.data.timings);
+            setImageArticle(response.data.images);
+            console.log(response.data)
+            console.log(response.data.summary);
+            setTimings1(response.data.summary);
+        } catch (error) {
+            console.error(error);
+            setIsLoading(false);
+        }
     };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        setVideoFile(file);
+      };
 
     const fetchVideoDuration = async () => {
         // POST-запрос для получения длительности видео
         try {
           const response = await axios.post(`${APIGetTimeVideo}${encodeURIComponent(videoUrl)}/`);
           setVideoDuration(response.data.duration);
+          setSettings(true)
           console.log(response.data.duration);
         } catch (error) {
           console.error(error);
@@ -52,66 +78,110 @@ const ArticleForm = () => {
 
     return (
         <div className='content_articlForm'>
+            <section className='first-section'>
+                <div className='welcome'>
+                    <h2>КОНВЕРТЕР ВИДЕО</h2>
+                    <h3>создает статью из видео</h3>
+                    <button className='glowing-btn' >
+                        <a href='#second-section' className='link'><span className='glowing-txt'>C<span className='faulty-letter'>L</span>ICK</span></a>
+                    </button>
+                </div>
+            </section>
             <br />
             {/* URL видео */}
-            <label htmlFor="videoUrl" className='videoUrl'>Ссылка на видео из YouTube:</label>
-            <input
-            type="text"
-            id="videoUrl"
-            value={videoUrl}
-            onChange={(e) => setVideoUrl(e.target.value)}
-            />
-            <button type="button" onClick={fetchVideoDuration}>
-            Отправить
-            </button>
+            <section className='second-section' id='second-section'>
+                {isLoading == false && article == null && (
+                    <div>
+                        <div htmlFor="videoUrl" className='videoUrl'>Ссылка на видео из YouTube:</div>
+                        <input
+                        type="text"
+                        id="videoUrl"
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        />
 
-            <br />
-            {/* Выбор мощности */}
-            <label htmlFor="power" className='power'>Мощность:</label>
-            <select id="power" onChange={(e) => setPower(parseInt(e.target.value))}>
-                <option value={0}>Мощно</option>
-                <option value={1}>Среднее</option>
-                <option value={2}>Быстро</option>
-            </select>
+                        <div className='imputVideo'>
+                            <input type="file" id='uploadBtn' accept="video/*" onChange={handleFileChange} />
+                            <label htmlFor='uploadBtn'>Загрузить свой файл</label>
+                        </div>
 
-            <br />
-            {/* Добавления времени  */}
-            <label className='addTime'>
-            Исправить начало и конец видео?
-            <input
-                type="checkbox"
-                checked={addTime}
-                onChange={(e) => setAddTime(e.target.checked)}
-            />
-            </label>
+                        <div className='settings'>
+                        Дополнительные настройки
+                        <input
+                            type="checkbox"
+                            onClick={fetchVideoDuration}
+                        />
+                        </div>
 
-            {/* Появление ползунков для выбора времени видео */}
-            {addTime && (
-            <div>
-                <label htmlFor="startTime" className='startTime'>Начальное время (в секундах):</label>
-                <input
-                type="range"
-                id="startTime"
-                min={0}
-                max={videoDuration}
-                value={startTime}
-                onChange={(e) => setStartTime(parseInt(e.target.value))}
-                />
+                        {settings && (
+                            <div>
+                            {/* Выбор мощности */}
+                            <div htmlFor="power" className='power'>Мощность:</div>
+                                <select id="power" onChange={(e) => setPower(parseInt(e.target.value))}>
+                                    <option value={0}>Мощно</option>
+                                    <option value={1}>Среднее</option>
+                                    <option value={2}>Быстро</option>
+                                </select>
 
-                <label htmlFor="endTime" className='endTime'>Конечное время:</label>
-                <input
-                type="range"
-                id="endTime"
-                min={0}
-                max={videoDuration}
-                value={endTime}
-                onChange={(e) => setEndTime(parseInt(e.target.value))}
-                />
-            </div>
-            )}
+                            {/* Добавления времени  */}
+                            <div className='addTime'>
+                            Исправить начало и конец видео?
+                            <input
+                                type="checkbox"
+                                checked={addTime}
+                                onChange={(e) => setAddTime(e.target.checked)}
+                            />
+                            </div>
 
-            <br />
-            <button onClick={handleSubmit}>Отправить</button>
+                            {/* Появление ползунков для выбора времени видео */}
+                            {addTime && (
+                            <div>
+                                <div htmlFor="startTime" className='startTime'>Начальное время (в секундах):</div>
+                                <input
+                                type="range"
+                                id="startTime"
+                                min={0}
+                                max={videoDuration}
+                                value={startTime}
+                                onChange={(e) => setStartTime(parseInt(e.target.value))}
+                                />
+
+                                <div htmlFor="endTime" className='endTime'>Конечное время:</div>
+                                <input
+                                type="range"
+                                id="endTime"
+                                min={0}
+                                max={videoDuration}
+                                value={endTime}
+                                onChange={(e) => setEndTime(parseInt(e.target.value))}
+                                />
+                            </div>
+                            )}
+                            </div>
+                        )}
+                        <button onClick={handleSubmit}>Получить статью</button>
+                    </div>
+                )}
+
+                {/*Демонстрация ползунка загрузки*/ }
+                {isLoading && article === null && (
+                    <div>
+                        Ползунок загрузки
+                    </div>
+                )}
+
+                {/*Демонстрация статьи*/ }
+                {article != null && (
+                <div className='article'>
+                    {article.map((paragraph, index) => (
+                    <div key={index}>
+                        <p className='article_text'>{timings[index]}</p>
+                        <p className='article_text'>{timings1[index]}</p>
+                    </div>
+                    ))}
+                </div>
+                )}
+            </section>
         </div>
     );
 };
