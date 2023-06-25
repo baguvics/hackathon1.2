@@ -16,6 +16,7 @@ import ffmpeg
 from time import gmtime, strftime
 import json
 
+from .speech_recognition import create_article
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -77,106 +78,19 @@ class VideoView(APIView):
 # Генерация статьи
 class ArticleView(APIView):
     def post(self, request):
-        # video_url = request.POST.get('videoUrl')
-        # power = request.POST.get('power')
-        # add_time = request.POST.get('addTime', False)
-        # start_time = request.POST.get('startTime')
-        # end_time = request.POST.get('endTime')
-        # video_file = request.FILES.get('videoFile')
-        # print(video_file)
+        video_url = request.POST.get('videoUrl')
+        power = request.POST.get('power')
+        add_time = request.POST.get('addTime', False)
+        start_time = request.POST.get('startTime')
+        end_time = request.POST.get('endTime')
+        video_file = request.FILES.get('videoFile')
+        print(video_file)
 
-        # title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))   # Название видео
-        
-        # with open(f'../youtube/{title}.mp4', 'wb') as file:    # Сохранение видео
-        #     file.write(video_file.read())
+        response_data = create_article(video_url=video_url,
+                                       video_file=None, start_time=0, power=power,
+                                       end_time=0, add_time=0, article_size=0)
 
-        return Response(video_url)
-        
-
-        # ssl._create_default_https_context = ssl._create_unverified_context
-
-        # if video_file is None:
-        #     youtube_video_content = YouTube(video_url)
-        #     youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
-        #     title = youtube_video_content.title
-
-        #     high_res_streams = youtube_video_content.streams
-        #     print(high_res_streams)
-        #     high_res_stream = high_res_streams[1]
-        #     high_res_stream.download("youtube")
-        #     YOUR_FILE = "youtube/{}.mp4".format(title)
-
-        #     probe = ffmpeg.probe(YOUR_FILE)
-        #     time = float(probe['streams'][0]['duration']) // 2
-        #     width = probe['streams'][0]['width']
-        # else:
-        #     return Response('файл пришел')
-
-        # model = whisper.load_model("tiny")
-
-        # result = model.transcribe("../youtube/Me.mp4", verbose=True, fp16=False)
-        # print(result["text"])
-
-        # for segment in result["segments"]:
-        #     print("{}:{}".format(segment["start"] // 60, int(segment["start"]) & 60) + "  " + segment["text"])
-
-        # text_from_video = result["text"]
-        # chunk_size = 1500
-
-        # sentences = re.findall(r'[^.!?]+[.!?]', text_from_video)
-        # chunks = []
-
-        # current_chunk = ''
-        # for sentence in sentences:
-        #     if len(current_chunk) + len(sentence) <= chunk_size:
-        #         current_chunk += sentence
-        #     else:
-        #         chunks.append(current_chunk)
-        #         current_chunk = sentence
-
-        # # Добавляем последний кусок текста
-        # if current_chunk:
-        #     chunks.append(current_chunk)
-
-        # chunks_timings = []
-        # # Находим тайминги для каждого чанка
-
-        # i = 0
-        # for chunk in chunks:
-        #     i += 1
-        #     for segment in result["segments"]:
-        #         if segment["text"][:7] == chunk[:7]:
-        #             chunks_timings.append(segment["start"])
-        #             print("chunk number ", i, " timing: ", segment["start"])
-
-        # summary_text = []
-        # openai.api_key = "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"
-        # prompt = "напиши абзац {} по следующему тексту из видео."
-        # chunk_id = 0
-        # for paragraph in chunks:
-        #     chunk_id += 1
-        #     text = prompt.format(chunk_id) + paragraph
-        #     summary = openai.Completion.create(
-        #         model="text-davinci-003",
-        #         prompt=text,
-        #         max_tokens=2000,
-        #         temperature=0.3
-        #     )
-        #     summary_text.append(summary['choices'][0]['text'])
-        #     print(summary['choices'][0]['text'])
-        # print(summary_text)
-
-        # response_data = {
-        #     'summary': summary_text,
-        #     'timings': chunks_timings,
-        #     # Другие данные статьи
-        # }
-        # temp_data = {
-        #     'summary': [' Макаров\n\n В томлениих грустей без надежной, тревогих шумной с уйты, вдруг пришло мгновение передомное – ты появилась на сцене, как мимолетное введение, как гений чистой красоты. Твои милые черты, шлигоды, бутбарыф мятежной России в прежние мечты вновь проникли в мое сердце. Твой голоснежный, твои небесные черты пробудили во мне божество и вдохновение, жизнь и слёзы, любовь. И я вновь почувствовал вдохновение и жизнь.'}], 
-        #     'timings': [0.0]
-        # }
-        # return Response(temp_data)
-        # return Response(response_data)
+        return Response(response_data)
     
 
     
