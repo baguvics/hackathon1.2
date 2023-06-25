@@ -77,18 +77,18 @@ class VideoView(APIView):
 # Генерация статьи
 class ArticleView(APIView):
     def post(self, request):
-        video_url = request.POST.get('videoUrl')
-        power = request.POST.get('power')
-        add_time = request.POST.get('addTime', False)
-        start_time = request.POST.get('startTime')
-        end_time = request.POST.get('endTime')
-        video_file = request.FILES.get('videoFile')
-        print(video_file)
+        # video_url = request.POST.get('videoUrl')
+        # power = request.POST.get('power')
+        # add_time = request.POST.get('addTime', False)
+        # start_time = request.POST.get('startTime')
+        # end_time = request.POST.get('endTime')
+        # video_file = request.FILES.get('videoFile')
+        # print(video_file)
 
-        title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))   # Название видео
+        # title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))   # Название видео
         
-        with open(f'../youtube/{title}.mp4', 'wb') as file:    # Сохранение видео
-            file.write(video_file.read())
+        # with open(f'../youtube/{title}.mp4', 'wb') as file:    # Сохранение видео
+        #     file.write(video_file.read())
 
         return Response(video_url)
         
