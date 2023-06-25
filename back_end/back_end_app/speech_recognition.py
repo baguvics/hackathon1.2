@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from moviepy.editor import VideoFileClip
 import cv2
 import re
 import whisper
@@ -92,7 +93,15 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
         video_duration = youtube_video_content.length
 
     else:
-        pass  # user's video file
+        video_title = video_file.name
+        print("title ", video_title)
+        file_dir = f'back_end_app/back_end/user/{video_title}'
+        video_clip = VideoFileClip(file_dir)
+        video_duration = video_clip.duration
+        print("Video Title:", video_title)
+        print("File Directory:", file_dir)
+        print("Video Duration:", video_duration)
+
     model_size = {
         0: "tiny",
         1: "small",
@@ -152,7 +161,7 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
     ai_chunk_size = int((article_size / chunks_quantity) / 2)
     titles_of_summaries = []
     summary_text = []
-    openai.api_key = "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"
+    openai.api_key = "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"
     prompt = "перепиши текст в стилистике статьи чтобы получилось {} символов и до конца осмысленного предложения и в начале придумай заголок в кавычках для текста в 1 предложение."
     chunk_id = 0
     for paragraph in chunks:  # openai requests in cycle for every chunk
@@ -211,6 +220,3 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
         'frames': frames
     }
 
-
-create_article(video_url="https://www.youtube.com/watch?v=TpIrJmVwfBo", video_file=None, start_time=0, power=2,
-               end_time=0, add_time=0, article_size=0)

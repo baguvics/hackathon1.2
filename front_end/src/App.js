@@ -5,7 +5,7 @@ import Login from './components/Login';
 import Home from './components/Home';
 import ArticleForm from './components/ArticlForm';
 import './css/App.css'
-import logo from './img/logo.svg';
+import logo from './img/logo.png';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,9 +36,10 @@ function App() {
         <header className='header'>
           <div className='header-left'>
             <div className='logo'>
-              <svg width="100px" height="100px" viewBox="0 0 100 100">
+              <img src = {logo} width='170px' className='logo'></img>
+              {/* <svg width="200px" height="100px" viewBox="0 0 100 100">
                 <image xlinkHref={logo} width="100" height="100" />
-              </svg>
+              </svg> */}
             </div>
           </div>
           <div className='header-right'>

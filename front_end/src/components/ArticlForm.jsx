@@ -21,7 +21,8 @@ const ArticleForm = () => {
     const [videoFile, setVideoFile] = useState(null);           // Видео файл
     const [titleOfArticle, setTitleOfArticle] = useState(null); // Название статьи
     const [annotation, setAnnotation] = useState(null);         // Аннотация статьи
-    const [titles, setTitles] = useState(null);                  // Заголовки абзацев
+    const [titles, setTitles] = useState(null);                 // Заголовки абзацев
+    const [symbol, setSymbol] = useState(0);                   // Количество символов для статьи
 
 
 
@@ -45,6 +46,7 @@ const ArticleForm = () => {
         formData.append('addTime', addTime);
         formData.append('startTime', startTime);
         formData.append('endTime', endTime);
+        formData.append('article_size', symbol);
         
         // POST-запрос для получения статьи
         try {
@@ -129,6 +131,7 @@ const ArticleForm = () => {
                         Дополнительные настройки
                         <input
                             type="checkbox"
+                            className='checkbox'
                             onClick={fetchVideoDuration}
                         />
                         </div>
@@ -136,17 +139,30 @@ const ArticleForm = () => {
                         {settings && (
                             <div>
                             {/* Выбор мощности */}
-                            <div htmlFor="power" className='power'>Мощность:</div>
-                                <select id="power" onChange={(e) => setPower(parseInt(e.target.value))}>
-                                    <option value={0}>Мощно</option>
-                                    <option value={1}>Среднее</option>
-                                    <option value={2}>Быстро</option>
+                            <div htmlFor="power" className='power'>Скорость обработки голоса:</div>
+                                <select id="power" className="power-select" onChange={(e) => setPower(parseInt(e.target.value))}>
+                                    <option value={0}>Быстрро, возможны потери в качестве</option>
+                                    <option value={1}>Среднее значение</option>
+                                    <option value={2}>Полная обработка голоса(рекомендуется)</option>
                                 </select>
+                            
+                            <div className='symbol'>
+                                <div className='text_symbol'>
+                                    Введите желаемое количество символов для статьи
+                                </div>
+                                <input className='input_symbol'
+                                type="text"
+                                id="input_symbol"
+                                value={symbol}
+                                onChange={(e) => setSymbol(e.target.value)}
+                            />
+                            </div>
 
                             {/* Добавления времени  */}
                             <div className='addTime'>
                             Исправить начало и конец видео?
                             <input
+                            className='checkbox'
                                 type="checkbox"
                                 checked={addTime}
                                 onChange={(e) => setAddTime(e.target.checked)}
@@ -155,31 +171,34 @@ const ArticleForm = () => {
 
                             {/* Появление ползунков для выбора времени видео */}
                             {addTime && (
-                            <div>
-                                <div htmlFor="startTime" className='startTime'>Начальное время (в секундах):</div>
-                                <input
-                                type="range"
-                                id="startTime"
-                                min={0}
-                                max={videoDuration}
-                                value={startTime}
-                                onChange={(e) => setStartTime(parseInt(e.target.value))}
-                                />
+                                <div>
+                                    <div htmlFor="startTime" className='startTime'>Начальное время (в секундах):</div>
+                                    <input
+                                    type="range"
+                                    id="startTime"
+                                    min={0}
+                                    max={videoDuration}
+                                    value={startTime}
+                                    onChange={(e) => setStartTime(parseInt(e.target.value))}
+                                    />
+                                    <span className="slider-value">{startTime}</span>
 
-                                <div htmlFor="endTime" className='endTime'>Конечное время:</div>
-                                <input
-                                type="range"
-                                id="endTime"
-                                min={0}
-                                max={videoDuration}
-                                value={endTime}
-                                onChange={(e) => setEndTime(parseInt(e.target.value))}
-                                />
-                            </div>
+                                    <div htmlFor="endTime" className='endTime'>Конечное время:</div>
+                                    <input
+                                    type="range"
+                                    id="endTime"
+                                    min={0}
+                                    max={videoDuration}
+                                    value={endTime}
+                                    onChange={(e) => setEndTime(parseInt(e.target.value))}
+                                    />
+                                    <span className="slider-value">{endTime}</span>
+                                </div>
                             )}
+
                             </div>
                         )}
-                        <button onClick={(e) => {handleSubmit(e, videoFile)}}>Получить статью</button>
+                        <button className='btn_articl' onClick={(e) => {handleSubmit(e, videoFile)}}>Получить статью</button>
                     </div>
                 )}
 

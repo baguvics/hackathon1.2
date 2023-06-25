@@ -6,6 +6,10 @@ body {
     background-color: black;
   }
   
+.logo{
+  margin: 10px 0 0 0;
+}
+
   body::before {
     content: "";
     position: fixed;
