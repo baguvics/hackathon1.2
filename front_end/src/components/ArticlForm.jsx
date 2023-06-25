@@ -7,7 +7,7 @@ const ArticleForm = () => {
     const APIGetArticle = 'http://127.0.0.1:8000/api/v1/article/';              // API для получения статьи
 
     const [videoUrl, setVideoUrl] = useState('');               // URL видоса
-    const [videoDuration, setVideoDuration] = useState('s');    // Полученная длительнотсь видео
+    const [videoDuration, setVideoDuration] = useState('');     // Полученная длительнотсь видео
     const [power, setPower] = useState(2);                      // Выбор мощности
     const [addTime, setAddTime] = useState(false);              // Выбор времени если нужно
     const [startTime, setStartTime] = useState(0);              // Начало видео
@@ -18,41 +18,52 @@ const ArticleForm = () => {
     const [isLoading, setIsLoading] = useState(false);          // Состояние загрузки статьи
     const [imageArticle, setImageArticle] =useState(null)       // Картинки статьи
     const [videoFile, setVideoFile] = useState(null);           // Видео файл
-    const [timings1, setTimings1] = useState('');                 // Тайминги
 
     const handleSubmit = async (e, videoFile) => {
-        if (endTime == 0){
-            setEndTime(videoDuration);
-        }
         e.preventDefault();
         setIsLoading(true);
+        console.log(videoFile)
+        if (endTime === 0) {
+          setEndTime(videoDuration);
+        }
+        console.log('Файл загружен:', videoFile);
+        
+        // Создание экземпляра FormData
+        const formData = new FormData();
+        
+        // Добавление данных в FormData
+        formData.append('videoUrl', videoUrl);
+        formData.append('videoFile', videoFile);
+        formData.append('videoDuration', videoDuration);
+        formData.append('power', power);
+        formData.append('addTime', addTime);
+        formData.append('startTime', startTime);
+        formData.append('endTime', endTime);
+        
         // POST-запрос для получения статьи
         try {
-            const response = await axios.post(APIGetArticle, {
-              videoUrl,
-              videoFile,
-              videoDuration,
-              power,
-              addTime,
-              startTime,
-              endTime,
-            });
-            
-            setArticle(response.data.summary);
-            setTimings(response.data.timings);
-            setImageArticle(response.data.images);
-            console.log(response.data)
-            console.log(response.data.summary);
-            setTimings1(response.data.summary);
+          const response = await axios.post(APIGetArticle, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          
+          setArticle(response.data.summary);
+          setTimings(response.data.timings);
+          setImageArticle(response.data.images);
+          console.log(response.data);
+          console.log(response.data.summary);
+
         } catch (error) {
-            console.error(error);
-            setIsLoading(false);
+          console.error(error);
+          setIsLoading(false);
         }
-    };
+      };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setVideoFile(file);
+        
       };
 
     const fetchVideoDuration = async () => {
@@ -101,7 +112,7 @@ const ArticleForm = () => {
                         />
 
                         <div className='imputVideo'>
-                            <input type="file" id='uploadBtn' accept="video/*" onChange={handleFileChange} />
+                            <input type="file" id='uploadBtn' name="videoFile" accept="video/*" onChange={handleFileChange} />
                             <label htmlFor='uploadBtn'>Загрузить свой файл</label>
                         </div>
 
@@ -159,7 +170,7 @@ const ArticleForm = () => {
                             )}
                             </div>
                         )}
-                        <button onClick={handleSubmit}>Получить статью</button>
+                        <button onClick={(e) => {handleSubmit(e, videoFile)}}>Получить статью</button>
                     </div>
                 )}
 
@@ -176,7 +187,7 @@ const ArticleForm = () => {
                     {article.map((paragraph, index) => (
                     <div key={index}>
                         <p className='article_text'>{timings[index]}</p>
-                        <p className='article_text'>{timings1[index]}</p>
+                        <p className='article_text'>{article[index]}</p>
                     </div>
                     ))}
                 </div>
