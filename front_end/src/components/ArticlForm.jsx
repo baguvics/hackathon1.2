@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/articlForm.css'
 
+
 const ArticleForm = () => {
     const APIGetTimeVideo = 'http://127.0.0.1:8000/api/v1/get_video_duration/'; // API для получения длительности видео
     const APIGetArticle = 'http://127.0.0.1:8000/api/v1/article/';              // API для получения статьи
@@ -16,8 +17,13 @@ const ArticleForm = () => {
     const [article, setArticle] = useState(null);               // Статья
     const [timings, setTimings] = useState('');                 // Тайминги
     const [isLoading, setIsLoading] = useState(false);          // Состояние загрузки статьи
-    const [imageArticle, setImageArticle] =useState(null)       // Картинки статьи
+    const [frames, setFrames] = useState(null)                  // Кадры статьи
     const [videoFile, setVideoFile] = useState(null);           // Видео файл
+    const [titleOfArticle, setTitleOfArticle] = useState(null); // Название статьи
+    const [annotation, setAnnotation] = useState(null);         // Аннотация статьи
+    const [titles, setTitles] = useState(null);                  // Заголовки абзацев
+
+
 
     const handleSubmit = async (e, videoFile) => {
         e.preventDefault();
@@ -50,9 +56,12 @@ const ArticleForm = () => {
           
           setArticle(response.data.summary);
           setTimings(response.data.timings);
-          setImageArticle(response.data.images);
+          setFrames(response.data.frames);
+          setTitleOfArticle(response.data.title_of_article);
+          setTitles(response.data.titles);
+          setAnnotation(response.data.annotation);
           console.log(response.data);
-          console.log(response.data.summary);
+          console.log(response.data.frames);
 
         } catch (error) {
           console.error(error);
@@ -92,7 +101,7 @@ const ArticleForm = () => {
             <section className='first-section'>
                 <div className='welcome'>
                     <h2>КОНВЕРТЕР ВИДЕО</h2>
-                    <h3>создает статью из видео</h3>
+                    <h3>создает_статью_из_видео</h3>
                     <button className='glowing-btn' >
                         <a href='#second-section' className='link'><span className='glowing-txt'>C<span className='faulty-letter'>L</span>ICK</span></a>
                     </button>
@@ -104,7 +113,7 @@ const ArticleForm = () => {
                 {isLoading == false && article == null && (
                     <div>
                         <div htmlFor="videoUrl" className='videoUrl'>Ссылка на видео из YouTube:</div>
-                        <input
+                        <input className='input_videoUrl'
                         type="text"
                         id="videoUrl"
                         value={videoUrl}
@@ -183,15 +192,34 @@ const ArticleForm = () => {
 
                 {/*Демонстрация статьи*/ }
                 {article != null && (
-                <div className='article'>
-                    {article.map((paragraph, index) => (
+                    
+                    <div className='article'>
+                        
+                    <div className='titleArticle'>{titleOfArticle}</div>
+                    <div className='annotation'>
+                        <p className='p_annotation'>Аннотация:</p>
+                        {annotation}
+                    </div>
+
+                    {titles.map((title, index) => (
                     <div key={index}>
-                        <p className='article_text'>{timings[index]}</p>
-                        <p className='article_text'>{article[index]}</p>
+                        <div className='articleText' contentEditable>
+                        <div className='articleTitle' contentEditable>{title}</div>
+                        <div className='articleTiming' contentEditable>Timing: {timings[index]}</div>
+                        <div className='articleSumary' contentEditable>{article[index]}</div>
+                        </div>
+
+                        <div className='articleFrames'>
+                        {frames[index].map((frame, frameIndex) => (
+                            <img key={frameIndex} src={'/frames/' + frame} className='articleImage' />
+                        ))}
+                        </div>
+
                     </div>
                     ))}
                 </div>
                 )}
+
             </section>
         </div>
     );

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import cv2
 import re
@@ -7,20 +8,19 @@ from pytube import YouTube
 from time import gmtime, strftime
 import openai
 
+
 # Генерация кадров для статьи
 def frame_extrude(video_path, frame_time, output_folder, chunk_timings: list):
     video = cv2.VideoCapture(video_path)
     fps = video.get(cv2.CAP_PROP_FPS)
-  
-    frame_skip = int(fps * int(frame_time))                # Количество кадров, после которых будет извлекаться важный кадр
+
+    frame_skip = int(fps * int(frame_time))  # Количество кадров, после которых будет извлекаться важный кадр
     prev_frame = None
     unchanged_frames = 0
     frame_count = 0
     saved_frames = set()
     print(fps)
     frames_array = [[] for i in range(len(chunk_timings))]
-
-
 
     while True:
         ret, frame = video.read()
@@ -32,8 +32,8 @@ def frame_extrude(video_path, frame_time, output_folder, chunk_timings: list):
             prev_frame = frame
             continue
 
-        frame_diff = cv2.absdiff(frame, prev_frame)     # Вычисляем разницу между текущим и предыдущим кадром
-        diff_mean = frame_diff.mean()                   # Среднее значение разницы
+        frame_diff = cv2.absdiff(frame, prev_frame)  # Вычисляем разницу между текущим и предыдущим кадром
+        diff_mean = frame_diff.mean()  # Среднее значение разницы
 
         if diff_mean == 0:
             unchanged_frames += 1
@@ -42,11 +42,11 @@ def frame_extrude(video_path, frame_time, output_folder, chunk_timings: list):
 
         if unchanged_frames >= frame_skip and frame.tostring() not in saved_frames:
             frame_filename = os.path.join(output_folder, f"frame_{frame_count}.jpg")  # Путь к файлу кадра
-            cv2.imwrite(frame_filename, frame)                                        # Сохраняем кадр в файл
+            cv2.imwrite(frame_filename, frame)  # Сохраняем кадр в файл
             saved_frames.add(frame.tostring())
             for chunk in range(len(chunk_timings)):
-                if frame_count/fps < chunk_timings[chunk] and f"frame_{frame_count}.jpg" not in frames_array:
-                    if chunk != 0 and frame_count/fps > chunk_timings[chunk-1]:
+                if frame_count / fps < chunk_timings[chunk] and f"frame_{frame_count}.jpg" not in frames_array:
+                    if chunk != 0 and frame_count / fps > chunk_timings[chunk - 1]:
                         frames_array[chunk].append(f"frame_{frame_count}.jpg")
                         print(frames_array)
                     elif chunk == 0:
@@ -55,7 +55,7 @@ def frame_extrude(video_path, frame_time, output_folder, chunk_timings: list):
 
         prev_frame = frame
         frame_count += 1
-    
+
     # Проверка и заполненение пустых массивов с картинками
     for i in range(len(frames_array)):
         if len(frames_array[i]) == 0:
@@ -72,28 +72,27 @@ def frame_extrude(video_path, frame_time, output_folder, chunk_timings: list):
     return frames_array
 
 
-
-
 # Генерация статьи
 def create_article(video_url, power, start_time, end_time, add_time, video_file, article_size):
     ssl._create_default_https_context = ssl._create_unverified_context
-
-    title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
-    file_dir = "hackathon1.2/back_end/youtube/{}.mp4".format(title)
-    print(file_dir)
+    file_dir = ''
+    video_title = ''
+    video_duration = 0
     if video_file is None:
         youtube_video_content = YouTube(video_url)
+        video_title = youtube_video_content.title
         youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
-        high_res_streams = youtube_video_content.streams.filter(progressive=True, file_extension='mp4')
-        sorted_streams = high_res_streams.order_by('resolution').desc()
+        file_dir = "back_end/youtube/{}.mp4".format(youtube_video_content.title)
+        high_res_streams = youtube_video_content.streams.filter(progressive=True,
+                                                                file_extension='mp4')  # progressive=True filters streams with audio and video
+        sorted_streams = high_res_streams.order_by('resolution').desc()  # sorting by best quality
         best_stream = sorted_streams.first()
         print(best_stream)
-        best_stream.download("hackathon1.2/back_end/youtube")
+        best_stream.download("back_end/youtube")
         video_duration = youtube_video_content.length
-        
 
     else:
-        pass
+        pass  # user's video file
     model_size = {
         0: "tiny",
         1: "small",
@@ -109,9 +108,9 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
         print(str(strftime('%H:%M:%S', gmtime(int(segment["start"])))) + segment["text"])
 
     text_from_video = result["text"]
-    text_from_video_lenght = len(result["text"])
-    print(f"длина текста из видева {text_from_video_lenght}")
-    chunk_size = 1500
+    text_from_video_length = len(result["text"])
+    print(f"длина текста из видева {text_from_video_length}")
+    chunk_size = 700
 
     sentences = re.findall(r'[^.!?]+[.!?]', text_from_video)
     chunks = []
@@ -134,7 +133,7 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
     print(f"все чанки!!! *{chunks}*")
     for chunk in chunks:
         for segment in result["segments"]:
-           
+
             if segment["text"][:7] == chunk[:7]:
                 timing = str(strftime('%H:%M:%S', gmtime(int(segment["start"]))))
                 chunks_timings.append(timing)
@@ -148,15 +147,15 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
     chunks_quantity = len(chunks_timings)
     print(f"колво абзацев: {chunks_quantity}")
 
-    if article_size == 0 or article_size > text_from_video_lenght:
-        article_size = text_from_video_lenght
-    ai_chunk_size = int((article_size/chunks_quantity)/2)
+    if article_size == 0 or article_size > text_from_video_length:
+        article_size = text_from_video_length
+    ai_chunk_size = int((article_size / chunks_quantity) / 2)
     titles_of_summaries = []
     summary_text = []
-    openai.api_key = "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"
-    prompt = "перепиши текст чтобы получилось {} символов и в начале придумай заголок в кавычках для текста в 1 предложение."
+    openai.api_key = "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"
+    prompt = "перепиши текст в стилистике статьи чтобы получилось {} символов и до конца осмысленного предложения и в начале придумай заголок в кавычках для текста в 1 предложение."
     chunk_id = 0
-    for paragraph in chunks:
+    for paragraph in chunks:  # openai requests in cycle for every chunk
         chunk_id += 1
         text = prompt.format(ai_chunk_size) + paragraph
         summary = openai.Completion.create(
@@ -165,11 +164,11 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
             max_tokens=ai_chunk_size,
             temperature=0.1
         )
-        # Извлечение заголовка
+        # splitting titles and body
         ai_output = summary['choices'][0]['text']
         text_utf8 = ai_output.encode('utf-8')
         text_without_newline = re.sub(b'\n', b'', text_utf8)
-        
+
         text_decoded = text_without_newline.decode('utf-8')
         match = re.search(r'"(.*?)"', text_decoded)
         title_of_chunk = ""
@@ -183,25 +182,35 @@ def create_article(video_url, power, start_time, end_time, add_time, video_file,
         titles_of_summaries.append(title_of_chunk)
         summary_text.append(body)
         print(summary['choices'][0]['text'])
-    
-    
+
+    messages = [{"role": "user", "content": f"Напиши аннотацию в 3-4 предложения из следующего текста {summary_text}"}]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo-0613",
+        messages=messages,
+    )
+    annotation = response["choices"][0]["message"]["content"]
+
     frame_time = 3
     output_folder = r"hackathon1.2/back_end/frames/"
-    
+    for timing_id in range(len(chunks_timings)):
+        if chunks_timings[timing_id] != chunks_timings[-1]:
+            chunks_timings[timing_id] = f"{chunks_timings[timing_id]}-{chunks_timings[timing_id+1]}"
+        else:
+            chunks_timings[timing_id] = f"{chunks_timings[timing_id]}-{str(strftime('%H:%M:%S', gmtime(int(video_duration))))}"
+
     frames = frame_extrude(file_dir, frame_time, output_folder, chunk_timings)
-    print(summary_text, titles_of_summaries, chunks_timings, frames)
+    print(f"Статья по видео - {video_title}", annotation,
+          summary_text, titles_of_summaries, chunks_timings, frames)
 
-    return summary_text, titles_of_summaries, chunks_timings, frames
+    return {
+        'title_of_article': f"Статья по видео - {video_title}",
+        'annotation': annotation,
+        'summary': summary_text,
+        'titles': titles_of_summaries,
+        'timings': chunks_timings,
+        'frames': frames
+    }
 
 
-create_article(video_url="https://www.youtube.com/watch?v=TpIrJmVwfBo", video_file=None, start_time=0, power=2, end_time=0, add_time=0, article_size=0)
-
-
-
-
-
-
-
-
-def q():
-    return('ssaw')
+create_article(video_url="https://www.youtube.com/watch?v=TpIrJmVwfBo", video_file=None, start_time=0, power=2,
+               end_time=0, add_time=0, article_size=0)

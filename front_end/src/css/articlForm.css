@@ -10,6 +10,10 @@
     color: white;
 }
 
+.welcome{
+  text-align: center;
+}
+
 .first-section {
     flex: 1;
     width: 100%;
@@ -38,16 +42,16 @@ h2{
   
 }
 h3{
-  margin: 50px 0 50px 0;
-  color: white;
+  margin: 35px 0 130px 0;
+  color: #6761CC;
   font-size: 50px;
-  font-family: PIXY;
+  font-family: sans-serif;
 }
 
 @import url("https://fonts.googleapis.com/css?family=Raleway");
 
 :root {
-  --glow-color: hsl(186 100% 69%);
+  --glow-color: #3600D3;
 }
 
 *,
@@ -65,7 +69,7 @@ h3{
   background: none;
   perspective: 2em;
   font-family: PIXY;
-  font-size: 60px;
+  font-size: 75px;
   font-weight: 900;
   letter-spacing: 0.5em;
 
@@ -125,7 +129,7 @@ h3{
 }
 
 .glowing-btn:hover {
-  color: rgba(0, 0, 0, 0.8);
+  color: white;
   text-shadow: none;
   animation: none;
 }
@@ -255,6 +259,8 @@ h3{
 
 
 /*Стили для второй секции*/
+
+
 .videoUrl, .power, .startTime, .addTime, .endTime, .settings, label {
   color: white;
   font-size: 35px;
@@ -263,47 +269,43 @@ h3{
 }
 .videoUrl {
   color: white;
-  font-size: 30px;
+  font-size: 35px;
   margin-bottom: 10px;
+  margin: 140px 0 30px 0;
+
+}
+
+.input_videoUrl{
+  border-radius: 20px;
 }
 
 .videoUrl::before {
   content: ">>"; 
   color: #9e2dd3; 
   margin-right: 5px;
+
 }
 
 #videoUrl {
   background-color: #000; 
   border: 2px solid var(--glow-color); 
-  color: var(--glow-color); 
-  font-family: PIXY; 
-  font-size: 16px;
+  color: white; 
+  font-family: sans-serif; 
+  font-size: 20px;
   padding: 10px;
   width: 474px;
+  height: 60px;
 }
 
 #videoUrl:focus {
   outline: none; /* Убрать контур при фокусе */
-  box-shadow: 0 0 10px #00ff00; /* Зеленая тень при фокусе */
-}
-
-
-.article_text{
-  color: white;
-  font-size: 20px;
-  font-family: PIXY;
-  max-width: 1100px;
-  max-height: 100vh;
-}
-
-.article{
-  max-width: 1100px;
+  box-shadow: 0 0 10px #6761CC; /* Зеленая тень при фокусе */
 }
 
 .inputVideo{
   display: grid;
   font-family: PIXY;
+
 }
 
 input[type='file']{
@@ -328,4 +330,73 @@ label{
 label:hover {
   border: 2px solid white;
   color: var(--glow-color);
+}
+
+
+/* Стили для статьи*/
+
+
+.article{
+  max-width: 1100px;
+  max-width: 1100px;
+  max-height: 100%;
+  text-align: justify;
+}
+
+.titleArticle , .annotation, .articleTitle, .articleTiming, .articleSumary{
+  color: white;
+  font-family: sans-serif;
+}
+
+.titleArticle{
+  margin: 10px 0 40px 0;
+  text-align: center;
+  font-size: 50px;
+  font-weight: bold;
+  font-family: PIXY;
+
+}
+
+.p_annotation{
+  font-size: 40px;
+  margin: 0px 0px 5px 0;
+  font-family: PIXY;
+  color: #6761CC;
+}
+
+.annotation{
+  margin: 0px 0px 40px 0px;
+  font-size: 25px;
+  line-height: 2;
+}
+
+.articleTitle{
+  color: #6761CC;
+  font-size: 40px;
+  font-family: PIXY;
+}
+
+.articleTiming{
+  font-size: 25px;
+  margin: 10px 0px 40px 0px;
+  color:  #797575;
+  font-weight: bold;
+}
+
+.articleSumary{
+  line-height: 2;
+  font-size: 25px;
+  margin: 0px 0px 40px 0px;
+
+
+}
+
+.articleFrames{
+  text-align: center;
+}
+
+.articleImage{
+  margin: 20px 0 20px 0;
+  width: 900px;
+  border: 5px solid white;
 }

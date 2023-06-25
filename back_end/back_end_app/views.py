@@ -1,5 +1,5 @@
 import re
-
+from .speech_recognition import create_article
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from . import models, serializers
@@ -75,108 +75,32 @@ class VideoView(APIView):
     
 
 # Генерация статьи
+# Генерация статьи
 class ArticleView(APIView):
     def post(self, request):
-        # video_url = request.POST.get('videoUrl')
-        # power = request.POST.get('power')
-        # add_time = request.POST.get('addTime', False)
-        # start_time = request.POST.get('startTime')
-        # end_time = request.POST.get('endTime')
-        # video_file = request.FILES.get('videoFile')
-        # print(video_file)
+            temp_data = {
+            'title_of_article': 'Бухгалтерия — где найти, как составить. 1C',
+            'annotation':   'В данном тексте рассказывается о процессе настройки и формирования штатного расписания в программе 1С бухгалтерии.',
+            'summary':  [
+                            ' Для этого нужно проверить настройки зарплаты и кадрового учета, а также флаг "Кадровые документы". Затем перейти в раздел "Отчеты по кадрам" и сформировать отчет "Штатные сотрудники". Он не будет похож на штатное расписание, но поможет создать его, удалив лишнюю информацию. Таким образом, в 1С бухгалтерии можно создать штатное расписание.',
+                            ' единиц, тарифную ставку и надбавки. Настройка отчета завершена."Настройка отчета о штатных сотрудниках": для того, чтобы правильно настроить отчет, нам нужно понять, какие сведения нам необходимы. Обычно штатное расписание организации утверждается на основе унифицированной формы Т3. Нам потребуется структурное подразделение, должность, количество штатных единиц, тарифная ставка и надбавки. В настройках вид формы должен быть расширенным, а вот группа И и группа ИЛИ не нужны.',
+                            'Нам нужны сотрудники, табельный номер, должность, тарифная ставка, дата увольнения для уволенных и вакантных должностей, рабочий телефон. В форме штатного расписания должны быть сведения о надбавках. Для этого в настройках отчета нужно вывести их. Открываем папку работа, приказ о приеме, находим начисления, открываем наименование и размер. Передвигаем поближе, проверяем структуру, закрываем и сформировываем. Отчет более компактный, содержит информацию об окладе и надбавка',
+                            'Для штатного расписания в 1С бухгалтерии нажмите на кнопку «Сохранить как» и выберите раздел, в котором должен сохраниться отчет, например, «Кадры». Затем нажмите «Сохранить». Отчет сформирован и выгружен в Excel. Если вам нужна дополнительная информация, посмотрите нашу статью «Штатное расписание в 1С бухгалтерии». Подписывайтесь на наш канал, чтобы не пропустить новые видео. Нажмите на колокольчик и получайте уведомления о новых видео. До новых встреч!'
+                        ],
+            'titles':   [
+                            'Как создать штатное расписание в Одинэс бухгалтерии?',
+                            'Настройка отчета о штатных сотрудниках',
+                            'Формирование штатного расписания: настройки и сохранение',
+                            'Штатное расписание в 1С бухгалтерии: простая настройка'
+                        ],
+            'timings':  ['00:00:00-00:01:47', '00:01:47-00:03:33', '00:03:33-00:05:39', '00:05:39-00:06:44'],
+            'frames':   [['frame_308.jpg', 'frame_2341.jpg'], ['frame_6390.jpg'], 
+                        ['frame_10170.jpg'], ['frame_11197.jpg']]
+            }
 
-        # title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))   # Название видео
-        
-        # with open(f'../youtube/{title}.mp4', 'wb') as file:    # Сохранение видео
-        #     file.write(video_file.read())
+            return Response(temp_data)
 
-        return Response(video_url)
-        
 
-        # ssl._create_default_https_context = ssl._create_unverified_context
-
-        # if video_file is None:
-        #     youtube_video_content = YouTube(video_url)
-        #     youtube_video_content.title = str(strftime("%a%d%b%Y%H%M%S", gmtime()))
-        #     title = youtube_video_content.title
-
-        #     high_res_streams = youtube_video_content.streams
-        #     print(high_res_streams)
-        #     high_res_stream = high_res_streams[1]
-        #     high_res_stream.download("youtube")
-        #     YOUR_FILE = "youtube/{}.mp4".format(title)
-
-        #     probe = ffmpeg.probe(YOUR_FILE)
-        #     time = float(probe['streams'][0]['duration']) // 2
-        #     width = probe['streams'][0]['width']
-        # else:
-        #     return Response('файл пришел')
-
-        # model = whisper.load_model("tiny")
-
-        # result = model.transcribe("../youtube/Me.mp4", verbose=True, fp16=False)
-        # print(result["text"])
-
-        # for segment in result["segments"]:
-        #     print("{}:{}".format(segment["start"] // 60, int(segment["start"]) & 60) + "  " + segment["text"])
-
-        # text_from_video = result["text"]
-        # chunk_size = 1500
-
-        # sentences = re.findall(r'[^.!?]+[.!?]', text_from_video)
-        # chunks = []
-
-        # current_chunk = ''
-        # for sentence in sentences:
-        #     if len(current_chunk) + len(sentence) <= chunk_size:
-        #         current_chunk += sentence
-        #     else:
-        #         chunks.append(current_chunk)
-        #         current_chunk = sentence
-
-        # # Добавляем последний кусок текста
-        # if current_chunk:
-        #     chunks.append(current_chunk)
-
-        # chunks_timings = []
-        # # Находим тайминги для каждого чанка
-
-        # i = 0
-        # for chunk in chunks:
-        #     i += 1
-        #     for segment in result["segments"]:
-        #         if segment["text"][:7] == chunk[:7]:
-        #             chunks_timings.append(segment["start"])
-        #             print("chunk number ", i, " timing: ", segment["start"])
-
-        # summary_text = []
-        # openai.api_key = "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"
-        # prompt = "напиши абзац {} по следующему тексту из видео."
-        # chunk_id = 0
-        # for paragraph in chunks:
-        #     chunk_id += 1
-        #     text = prompt.format(chunk_id) + paragraph
-        #     summary = openai.Completion.create(
-        #         model="text-davinci-003",
-        #         prompt=text,
-        #         max_tokens=2000,
-        #         temperature=0.3
-        #     )
-        #     summary_text.append(summary['choices'][0]['text'])
-        #     print(summary['choices'][0]['text'])
-        # print(summary_text)
-
-        # response_data = {
-        #     'summary': summary_text,
-        #     'timings': chunks_timings,
-        #     # Другие данные статьи
-        # }
-        # temp_data = {
-        #     'summary': [' Макаров\n\n В томлениих грустей без надежной, тревогих шумной с уйты, вдруг пришло мгновение передомное – ты появилась на сцене, как мимолетное введение, как гений чистой красоты. Твои милые черты, шлигоды, бутбарыф мятежной России в прежние мечты вновь проникли в мое сердце. Твой голоснежный, твои небесные черты пробудили во мне божество и вдохновение, жизнь и слёзы, любовь. И я вновь почувствовал вдохновение и жизнь.'}], 
-        #     'timings': [0.0]
-        # }
-        # return Response(temp_data)
-        # return Response(response_data)
     
 
     

@@ -2,11 +2,24 @@ body {
     max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
-    background-image: url('../img/back.svg');
-    background-size: cover; 
-    background-position: center; 
-    background-repeat: no-repeat; 
-}
+    position: relative;
+    background-color: black;
+  }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/back2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    z-index: -1;
+  }
   
 .header {
     display: flex;
@@ -28,13 +41,13 @@ body {
   
 .register-link  {
     text-decoration: none; 
-    color: white;
-    font-family: PIXY;
+    color: #6761CC;
+    font-family: sans-serif;
     font-size: 25px;
 }
 
 .register-link:hover {
-    color: red; /* Изменяем цвет при наведении */
+    color: white; 
 }
 
 .container {
